@@ -2,7 +2,7 @@
 
 
 from sqlalchemy import create_engine, Integer, String, Float, select
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 
 engine = create_engine('sqlite:///kutubxona.db', echo=True)
 
@@ -18,23 +18,17 @@ class Book(Base):
     narxi: Mapped[float] = mapped_column(Float)
     sahifa_soni: Mapped[int] = mapped_column(Integer)
 
-    def repr(self):
-        return f"Book(id={self.id}, nomi='{self.nomi}', narxi={self.narxi})"
+Base.metadata.create_all(bind=engine)
 
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
 
-if session.scalar(select(Book)) is None:
-    books_data = [
-        ("Python Asoslari", "Anvar Karimov", 45, 320),
-        ("Clean Code", "Robert Martin", 90, 450),
-        ("Atomic Habits", "James Clear", 70, 280),
-        ("Python Web Development", "Dilshod Rasulov", 60, 500),
-        ("Algoritmlar", "Saidbek Xasanov", 55, 410),
-    ]
-    for nomi, muallif, narxi, sahifa_soni in books_data:
-        session.add(Book(nomi=nomi, muallif=muallif, narxi=narxi, sahifa_soni=sahifa_soni))
+with Session(engine) as session:
+    k1 = Book(nomi = "Python Asoslari", muallif = "Anvar Karimov", narxi = 45.0, sahifa_soni = 320)
+    k2 = Book(nomi = "Clean Code", muallif = "Robert Martin", narxi = 90.0, sahifa_soni = 450)
+    k3 = Book(nomi = "Atomic Habits", muallif = "James Clear", narxi = 70.0, sahifa_soni = 280)
+    k4 = Book(nomi = "Python Web Development", muallif = "Dilshod Rasulov", narxi = 60.0, sahifa_soni  = 500)
+    k5 = Book(nomi = "Algoritmlar", muallif = "Saidbek Xasanov", narxi = 55.0, sahifa_soni = 410)
+    
+    session.add_all([k1,k2,k3,k4,k5])
     session.commit()
 
 barcha_kitoblar = session.scalars(select(Book)).all()
@@ -61,9 +55,8 @@ session.close()
 
 
 #2-topshiriq
-
 from sqlalchemy import create_engine, Integer, String, Float, select
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 
 engine = create_engine('sqlite:///kino.db', echo=True)
 
@@ -79,25 +72,16 @@ class Movie(Base):
     reyting: Mapped[float] = mapped_column(Float)
     yili: Mapped[int] = mapped_column(Integer)
 
-    def repr(self):
-        return f"Movie('{self.nomi}', {self.janr}, {self.reyting}, {self.yili})"
-
 Base.metadata.create_all(engine)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+with Session(engine) as session:
+    m1 = Movie(nomi = "Interstellar", janr = "Sci-Fi", reyting = 8.7, yili = 2014),
+    m2 = Movie(nomi = "The Dark Knight", janr = "Action", reyting = 9.0, yili = 2008),
+    m3 = Movie(nomi = "Forrest Gump", janr = "Drama", reyting = 8.8, yili = 1994),
+    m4 = Movie(nomi = "The Hangover", janr = "Comedy", reyting = 7.7, yili = 2009),
+    m5 = Movie(nomi = "Avengers: Endgame", janr = "Action", reyting = 8.4, yili =2019),
+    m6 = Movie(nomi = "Inception", janr = "Sci-Fi", reyting = 8.8, yili = 2010),
 
-if session.scalar(select(Movie)) is None:
-    movies_data = [
-        ("Interstellar", "Sci-Fi", 8.7, 2014),
-        ("The Dark Knight", "Action", 9.0, 2008),
-        ("Forrest Gump", "Drama", 8.8, 1994),
-        ("The Hangover", "Comedy", 7.7, 2009),
-        ("Avengers: Endgame", "Action", 8.4, 2019),
-        ("Inception", "Sci-Fi", 8.8, 2010),
-    ]
-    for nomi, janr, reyting, yili in movies_data:
-        session.add(Movie(nomi=nomi, janr=janr, reyting=reyting, yili=yili))
     session.commit()
 
 eski = session.scalars(select(Movie).order_by(Movie.yili.asc())).first()
