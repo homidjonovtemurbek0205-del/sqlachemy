@@ -4,7 +4,7 @@
 from sqlalchemy import create_engine, Integer, String, Float, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
-engine = create_engine('sqlite:///kutubxona.db', echo=False)
+engine = create_engine('sqlite:///kutubxona.db', echo=True)
 
 class Base(DeclarativeBase):
     pass
@@ -65,7 +65,7 @@ session.close()
 from sqlalchemy import create_engine, Integer, String, Float, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
-engine = create_engine('sqlite:///kino.db', echo=False)
+engine = create_engine('sqlite:///kino.db', echo=True)
 
 class Base(DeclarativeBase):
     pass
